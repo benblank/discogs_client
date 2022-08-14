@@ -109,6 +109,33 @@ class RequestsFetcher(Fetcher):
         return resp.content, resp.status_code
 
 
+class KeySecretFetcher(RequestsFetcher):
+    def __init__(self, consumer_key, consumer_secret):
+        self.consumer_key = consumer_key
+        self.consumer_secret = consumer_secret
+
+    def fetch(self, *args, headers=None, **kwargs):
+        """
+        Parameters
+        ----------
+        headers : dict, optional
+            HTTP headers, by default None.
+
+        All other arguments are passed through to RequestsFetcher.
+
+        Returns
+        -------
+        content : bytes
+            as returned by Python "Requests"
+        status_code : int
+            as returned by Python "Requests"
+        """
+        headers = {} if headers is None else {**headers}
+        headers['Authorization'] = f"Discogs key={self.consumer_key}, secret={self.consumer_secret}"
+
+        return super().fetch(*args, **kwargs, headers=headers)
+
+
 class UserTokenRequestsFetcher(Fetcher):
     """Fetches via HTTP from the Discogs API using User-token authentication"""
     def __init__(self, user_token):

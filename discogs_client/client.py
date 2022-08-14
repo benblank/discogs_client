@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 from discogs_client import models
 from discogs_client.exceptions import ConfigurationError, HTTPError, AuthorizationError
 from discogs_client.utils import update_qs
-from discogs_client.fetchers import RequestsFetcher, OAuth2Fetcher, UserTokenRequestsFetcher
+from discogs_client.fetchers import KeySecretFetcher, RequestsFetcher, OAuth2Fetcher, UserTokenRequestsFetcher
 
 
 class Client:
@@ -13,16 +13,19 @@ class Client:
     _authorize_url = 'https://www.discogs.com/oauth/authorize'
     _access_token_url = 'https://api.discogs.com/oauth/access_token'
 
-    def __init__(self, user_agent, consumer_key=None, consumer_secret=None, token=None, secret=None, user_token=None):
+    def __init__(self, user_agent, consumer_key=None, consumer_secret=None, token=None, secret=None, user_token=None, no_oauth=False):
         """An interface to the Discogs API."""
         self.user_agent = user_agent
         self.verbose = False
         self._fetcher = RequestsFetcher()
 
         if consumer_key and consumer_secret:
-            self.set_consumer_key(consumer_key, consumer_secret)
-            if token and secret:
-                self.set_token(token, secret)
+            if no_oauth:
+                self._fetcher = KeySecretFetcher(consumer_key, consumer_secret)
+            else:
+                self.set_consumer_key(consumer_key, consumer_secret)
+                if token and secret:
+                    self.set_token(token, secret)
         elif user_token is not None:
             self._fetcher = UserTokenRequestsFetcher(user_token)
 
