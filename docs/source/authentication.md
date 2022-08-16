@@ -8,6 +8,8 @@ want to use endpoint that require authentication, or for users who are writing
 apps that only represent a single user (e.g., writing a store-front for your
 Discogs seller account).
 
+Key/secret authentication 
+
 OAuth is useful if you want to create an application where a user uses your app
 as a proxy to make requests and change information about their Discogs account.
 This includes profile information, collection and wantlist information, and
@@ -38,7 +40,7 @@ that you'll be limited to the information only your user account can see
 
 
 
-## OAuth Authentication
+## Key/Secret Authentication
 
 OAuth is an open protocol commonly used for authorization (and in this case,
 authentication as well). For more information on the OAuth specification,

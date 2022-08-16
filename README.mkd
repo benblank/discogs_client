@@ -55,9 +55,9 @@ There are two different authorization methods you can choose from depending on
 your requirements:
 [User-token](
 https://python3-discogs-client.readthedocs.org/en/latest/authentication.html#user-token-authorization)
-and [OAuth](
-https://python3-discogs-client.readthedocs.org/en/latest/authentication.html#oauth-authorization)
-authentication.
+and [key/secret](
+https://python3-discogs-client.readthedocs.org/en/latest/authentication.html#key-secret-authorization)
+ (including OAuth) authentication.
 
 _Note that Authorization is an optional feature of the Discogs API but a lot of
 basic functionality, like searching for releases, artists, etc. requires users
@@ -79,8 +79,8 @@ on the Discogs website.
 ```
 
 _Head to the [authentication
-section](https://python3-discogs-client.readthedocs.org/en/latest/authentication.html#oauth-authentication)
-in our docs to learn about the OAuth authentication method._
+section](https://python3-discogs-client.readthedocs.org/en/latest/authentication.html#key-secret-authentication)
+in our docs to learn about the key/secret authentication method._
 
 
 ### Fetching data

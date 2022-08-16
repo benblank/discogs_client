@@ -153,11 +153,15 @@ class UserTokenRequestsFetcher(Fetcher):
         return resp.content, resp.status_code
 
 
-class OAuth2Fetcher(Fetcher):
-    """Fetches via HTTP + OAuth 1.0a from the Discogs API."""
+class KeySecretFetcher(Fetcher):
+    """Fetches via HTTP, optionally with OAuth 1.0a, from the Discogs API."""
     def __init__(self, consumer_key, consumer_secret, token=None, secret=None):
-        self.client = oauth1.Client(consumer_key, client_secret=consumer_secret)
-        self.store_token(token, secret)
+        self.consumer_key = consumer_key
+        self.consumer_secret = consumer_secret
+        self.client = None
+
+        if token is not None or secret is not None:
+            self.store_token(token, secret)
 
     def store_token_from_qs(self, query_string):
         token_dict = dict(parse_qsl(query_string))
@@ -170,6 +174,9 @@ class OAuth2Fetcher(Fetcher):
         self.store_token(None, None)
 
     def store_token(self, token, secret):
+        if self.client is None:
+            self.client = oauth1.Client(self.consumer_key, client_secret=self.consumer_secret)
+
         self.client.resource_owner_key = token
         self.client.resource_owner_secret = secret
 
@@ -203,9 +210,12 @@ class OAuth2Fetcher(Fetcher):
             as returned by Python "Requests"
         """
         body = json.dumps(data) if json_format and data else data
-        uri, headers, body = self.client.sign(url, http_method=method,
-                                              body=body, headers=headers)
-
+        if self.client is not None:
+            uri, headers, body = self.client.sign(url, http_method=method,
+                                                body=body, headers=headers)
+        else:
+            headers = {} if headers is None else {**headers}
+            headers['Authorization'] = f"Discogs key={self.consumer_key}, secret={self.consumer_secret}"
         resp = self.request(method, url, data=body, headers=headers)
         self.rate_limit = resp.headers.get(
                 'X-Discogs-Ratelimit')
